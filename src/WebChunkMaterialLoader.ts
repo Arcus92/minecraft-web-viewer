@@ -8,7 +8,7 @@ import {UVMapping} from "three/src/constants";
 /**
  * The binary material loader
  */
-export class MinecraftMaterialLoader extends THREE.Loader {
+export class WebChunkMaterialLoader extends THREE.Loader {
 
     /**
      * Loads the mesh from the given url

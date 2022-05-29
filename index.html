@@ -8,10 +8,26 @@
         body {
             margin: 0;
             background-color: #000000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #info-text {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 4px #000000;
+        }
+        #info-text a {
+            color: #aaaaaa;
         }
     </style>
 </head>
 <body>
+    <script>
+        window.addEventListener("load", function() {
+            MinecraftWebViewer.init();
+        });
+    </script>
     <div id="info-text">By <a href="https://www.david-schulte.de/" target="_blank">David Schulte</a> - Twitter: <a href="https://twitter.com/Arcus92" target="_blank">@Arcus92</a></div>
 </body>
 </html>

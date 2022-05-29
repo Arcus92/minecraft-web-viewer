@@ -1,12 +1,12 @@
 import * as THREE from 'three/src/Three'
 import * as pako from 'pako';
-import {MaterialCreator} from "./MinecraftMaterialLoader";
+import {MaterialCreator} from "./WebChunkMaterialLoader";
 import {Mesh} from "three";
 
 /**
  * A custom loader class for compressed and optimized meshes
  */
-export class MinecraftChunkMeshLoader extends THREE.Loader {
+export class WebChunkMeshLoader extends THREE.Loader {
     /**
      * The materials
      */
@@ -16,7 +16,7 @@ export class MinecraftChunkMeshLoader extends THREE.Loader {
      * Sets the materials
      * @param materials
      */
-    public setMaterials(materials: MaterialCreator): MinecraftChunkMeshLoader {
+    public setMaterials(materials: MaterialCreator): WebChunkMeshLoader {
         this.materials = materials;
         return this;
     }

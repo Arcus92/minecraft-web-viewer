@@ -10,7 +10,7 @@ Don't believe me? [Try the demo on my homepage!](https://3dmap.david-schulte.de/
 
 This project is still in the early stages of development. Many features are missing or incomplete. For example:
 - The tool supports multiple worlds. There is no world selection, but you can change the world by modifying the url: `#w=other_world`. 
-- The viewer will always initialize with the world named `world`. Make sure you always have a world named `world` uploaded.
+- The viewer will always with the world named `world`. You can change the initial world in your HTML initialisation script: `MinecraftWebViewer.init({ world: 'new_world' });`
 - There is no error handling when a world could not be found.
 - The user can not change the viewing distance. This can cause performance issues on low-end devises.
 

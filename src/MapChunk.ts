@@ -1,6 +1,6 @@
 import {MapView} from "./MapView";
 import {Mesh} from "three";
-import {MinecraftChunkMeshLoader} from "./MinecraftChunkMeshLoader";
+import {WebChunkMeshLoader} from "./WebChunkMeshLoader";
 
 /**
  * A loaded part of the world. The coordinates of this chunk are divided by the MapView.chunkSpan.
@@ -24,7 +24,7 @@ export class MapChunk {
     /**
      * The current chunk loader
      */
-    public loader: MinecraftChunkMeshLoader;
+    public loader: WebChunkMeshLoader;
 
     /**
      * The loaded mesh

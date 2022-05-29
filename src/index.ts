@@ -1,11 +1,12 @@
-import {MinecraftViewer} from "./MinecraftViewer";
+import {MapViewer} from "./MapViewer";
+import {MapViewerOptions} from "./MapViewerOptions";
 
-// Creates the viewer when the site is loaded
-window.addEventListener("load", function() {
-    // TODO: Move this to index.html so the initialization is not part of the script file.
-    const viewer = new MinecraftViewer();
-    viewer.setWorldPath('world');
-    viewer.init();
-});
-
-
+/**
+ * Initialize the Minecraft web viewer
+ * @param options The options for the map viewer
+ */
+export function init(options?: MapViewerOptions): MapViewer {
+    const viewer = new MapViewer();
+    viewer.init(options);
+    return viewer;
+}

@@ -6,32 +6,59 @@ import {
     PerspectiveCamera
 } from "three";
 import {MapControls} from "three/examples/jsm/controls/OrbitControls";
-import {MinecraftChunkMeshLoader} from "./MinecraftChunkMeshLoader";
-import {MaterialCreator, MinecraftMaterialLoader} from "./MinecraftMaterialLoader";
+import {WebChunkMeshLoader} from "./WebChunkMeshLoader";
+import {MaterialCreator, WebChunkMaterialLoader} from "./WebChunkMaterialLoader";
 import {MapView} from "./MapView";
 import {MapChunk} from "./MapChunk";
 import {WorldInfo} from "./WorldInfo";
+import {MapViewerOptions} from "./MapViewerOptions";
 
-export class MinecraftViewer {
+export class MapViewer {
 
     /**
      * Inits the viewer in the document root
      */
-    public init() {
+    public init(options?: MapViewerOptions) {
 
         let shadowMapSize = 2048;
+        let containerElement = document.body;
+        let warnMobileUsers = true;
 
-        // Check mobile
+        if (options) {
+            // Reads the initial world path
+            if (options.world !== undefined) {
+                this.initialWorldPath = options.world;
+            }
+
+            // Reads the container element for the 3D canvas
+            if (options.container !== undefined) {
+                if (options.container instanceof HTMLElement) {
+                    containerElement = options.container;
+                } else {
+                    containerElement = document.getElementById(options.container);
+                }
+            }
+
+            // Should the mobile warning be shown
+            if (options.warnMobileUsers !== undefined) {
+                warnMobileUsers = options.warnMobileUsers;
+            }
+        }
+
+        // Check for mobile users and warn
         if(/Android|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent)) {
+            // Reduce viewing distance and shadow resolution
             this.chunkLoadDistance = 10;
             this.chunkUnloadDistance = 12;
             shadowMapSize = 512;
 
             // Hacky mobile warning
-            if (!window.confirm("Dear smartphone user,\n" +
-                "this site draws a Minecraft world in real time 3D. This will use up both your data volume and your battery. A WiFi connection is highly recommended!\n" +
-                "Would you like to continue anyway?")) {
-                return;
+            if (warnMobileUsers) {
+                if (!window.confirm("Dear smartphone user,\n" +
+                    "this site draws a Minecraft world in real time 3D. This will use up both your data volume and your battery. A WiFi connection is highly recommended!\n" +
+                    "Would you like to continue anyway?")) {
+                    return;
+                }
             }
         }
 
@@ -40,7 +67,7 @@ export class MinecraftViewer {
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0x78a7ff, 1.0);
-        document.body.appendChild(this.renderer.domElement);
+        containerElement.appendChild(this.renderer.domElement);
 
         // Enable shadows
         this.renderer.shadowMap.enabled = true;
@@ -413,14 +440,6 @@ export class MinecraftViewer {
         this.worldPath = undefined;
     }
 
-
-    /**
-     * Sets the world path
-     */
-    public setWorldPath(path: string) {
-        this.initialWorldPath = path;
-    }
-
     /**
      * The path to the material data
      */
@@ -450,7 +469,7 @@ export class MinecraftViewer {
      */
     private loadMaterialFile(key: string, next: () => void = null) {
         // Loads the material file
-        const matLoader = new MinecraftMaterialLoader(this.loadingManager);
+        const matLoader = new WebChunkMaterialLoader(this.loadingManager);
         matLoader.setPath(this.materialPath);
         matLoader.load(key + '.mats', (m) => {
             this.materials[key] = m;
@@ -564,7 +583,7 @@ export class MinecraftViewer {
      */
     private checkLoadChunks(view: MapView, chunkX: number, chunkZ: number) {
         // Loads the chunks
-        MinecraftViewer.loadSpiral(this.chunkLoadDistance, 8, (x, y) => {
+        MapViewer.loadSpiral(this.chunkLoadDistance, 8, (x, y) => {
             return this.loadChunkIfNeeded(view, chunkX + x, chunkZ + y);
         });
     }
@@ -670,8 +689,8 @@ export class MinecraftViewer {
      * @param url The url to the mesh file
      * @param onLoad The load event
      */
-    private loadMeshFile(url: string, onLoad: (mesh: Mesh) => void): MinecraftChunkMeshLoader {
-        const loader = new MinecraftChunkMeshLoader(this.loadingManager);
+    private loadMeshFile(url: string, onLoad: (mesh: Mesh) => void): WebChunkMeshLoader {
+        const loader = new WebChunkMeshLoader(this.loadingManager);
         loader.setPath(this.worldPath + '/');
         loader.setMaterials(this.materials['block']);
         loader.load(url, (mesh) => {
