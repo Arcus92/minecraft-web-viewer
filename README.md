@@ -1,4 +1,4 @@
-![](images/minecraft-web-viewer.png)
+![](.github/images/minecraft-web-viewer.png)
 
 The `MinecraftMapViewer` lets you explore your Minecraft worlds in 3D within your web browser. 
 
