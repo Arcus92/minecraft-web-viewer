@@ -1,39 +1,38 @@
 ![](.github/images/minecraft-web-viewer.png)
 
-The `MinecraftMapViewer` lets you explore your Minecraft worlds in 3D within your web browser. 
+The `Minecraft Map Viewer` lets you explore your Minecraft worlds in 3D within your web browser.
+[Try the demo!](https://3dmap.david-schulte.de/#w=world&tx=196&tz=382.4&cx=155&cy=93.7&cz=402.6)
 
-The world files must be converted with the [Minecraft Web Exporter](https://github.com/Arcus92/MinecraftWebExporter) first. This will not draw your Minecraft server in *real-time*.
+# Usage
 
-Don't believe me? [Try the demo on my homepage!](https://3dmap.david-schulte.de/#w=world&tx=196&tz=382.4&cx=155&cy=93.7&cz=402.6)
+- Your Minecraft world must be converted via the [Minecraft Web Exporter](https://github.com/Arcus92/minecraft-web-exporter).
+- Download the [latest release](https://github.com/Arcus92/minecraft-web-viewer/releases) or [compile from source](#compile-from-source).
+- Upload the viewer files to a static web server.
+- Upload the converted world files in the same directory.
 
-### !!! This project is still under construction !!!
+# Compiling from source
 
-This project is still in the early stages of development. Many features are missing or incomplete. For example:
-- The tool supports multiple worlds. There is no world selection, but you can change the world by modifying the url: `#w=other_world`. 
-- The viewer will always with the world named `world`. You can change the initial world in your HTML initialisation script: `MinecraftWebViewer.init({ world: 'new_world' });`
-- There is no error handling when a world could not be found.
-- The user can not change the viewing distance. This can cause performance issues on low-end devises.
+Install [Node.js](https://nodejs.org/) with the Node Package Manager *(NPM)*.
 
-## Requirements
+```shell
+git clone https://github.com/Arcus92/minecraft-web-viewer.git
+cd minecraft-web-viewer
+npm ci
+```
 
-The web viewer can run on any static web server. There is no backend required. 
+## Build
 
-To compile the project files you have to install [Node.js](https://nodejs.org/).
+```shell
+npm run build
+```
 
-## Installation
+You can find the output files in `minecraft-web-viewer/dist`.
 
-- Install [Node.js](https://nodejs.org/) with the Node Package Manager *(NPM)*.
-- Checkout the code via `git` or download the zip archive and extract it.
-- Open a terminal, navigate to the project directory. 
-- Run `npm ci` to install the required node modules.
-- Run `npm run dev` to start a local web server on `http://localhost:9000/`. You can copy your exported world files into `dist` for testing. 
+## Start a debug server
 
-
-## Deploy to your server
-
-- Run `npm run build` to build the web viewer into the `dist` directory.
-- Upload the content of the `dist` folder onto your web server.
-- Upload the converter world files created by the [Minecraft Web Exporter](https://github.com/Arcus92/MinecraftWebExporter) into the same directory.
+```shell
+npm run dev
+```
 
 # Notice
 
