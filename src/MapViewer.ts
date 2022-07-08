@@ -383,7 +383,7 @@ export class MapViewer {
     /**
      * The loaded materials
      */
-    private materials: { [key: string]: MaterialCreator } = {};
+    private materials: MaterialCreator;
 
     /**
      * The path to the world that should be loaded on initialization
@@ -456,10 +456,8 @@ export class MapViewer {
      * Loads the materials
      */
     private loadMaterials() {
-        // Load the block materials and starts chunk loading
-        this.loadMaterialFile('block', () => {
-
-        })
+        // Load the materials and starts chunk loading
+        this.loadMaterialFile('minecraft');
     }
 
     /**
@@ -472,7 +470,7 @@ export class MapViewer {
         const matLoader = new WebChunkMaterialLoader(this.loadingManager);
         matLoader.setPath(this.materialPath);
         matLoader.load(key + '.mats', (m) => {
-            this.materials[key] = m;
+            this.materials = m;
             if (next) next();
         });
     }
@@ -692,7 +690,7 @@ export class MapViewer {
     private loadMeshFile(url: string, onLoad: (mesh: Mesh) => void): WebChunkMeshLoader {
         const loader = new WebChunkMeshLoader(this.loadingManager);
         loader.setPath(this.worldPath + '/');
-        loader.setMaterials(this.materials['block']);
+        loader.setMaterials(this.materials);
         loader.load(url, (mesh) => {
             // Enable shadow on the mesh
             mesh.castShadow = true;
