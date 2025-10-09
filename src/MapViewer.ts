@@ -74,11 +74,11 @@ export class MapViewer {
         this.camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 5000);
 
         // Creates the ambient light
-        this.ambientLight = new THREE.AmbientLight(0xdddddd, 0.8);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         this.scene.add(this.ambientLight);
 
         // Creates the light
-        this.light = new THREE.DirectionalLight(0xffffff, 0.8);
+        this.light = new THREE.DirectionalLight(0xffffff, 1.0);
         const lightFrustum = 255;
         this.light.castShadow = true
         this.light.shadow.mapSize.width = shadowMapSize;
