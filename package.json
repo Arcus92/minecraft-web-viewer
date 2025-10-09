@@ -41,8 +41,8 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
-    "@types/three": "^0.136.0",
-    "pako": "^2.0.4",
-    "three": "^0.136.0"
+    "@types/three": "0.180.0",
+    "pako": "2.1.0",
+    "three": "0.180.0"
   }
 }

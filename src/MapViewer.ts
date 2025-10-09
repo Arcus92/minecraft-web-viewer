@@ -1,17 +1,11 @@
-import THREE = require("three");
-import {
-    AmbientLight,
-    DirectionalLight,
-    LoadingManager, Mesh,
-    PerspectiveCamera
-} from "three";
-import {MapControls} from "three/examples/jsm/controls/OrbitControls";
+import * as THREE from "three";
 import {WebChunkMeshLoader} from "./WebChunkMeshLoader";
 import {MaterialCreator, WebChunkMaterialLoader} from "./WebChunkMaterialLoader";
 import {MapView} from "./MapView";
 import {MapChunk} from "./MapChunk";
 import {WorldInfo} from "./WorldInfo";
 import {MapViewerOptions} from "./MapViewerOptions";
+import {MapControls} from "three/examples/jsm/controls/MapControls";
 
 export class MapViewer {
 
@@ -287,7 +281,7 @@ export class MapViewer {
     /**
      * The main camera
      */
-    public camera: PerspectiveCamera;
+    public camera: THREE.PerspectiveCamera;
 
     /**
      * The camera distance on the last frame
@@ -316,12 +310,12 @@ export class MapViewer {
     /**
      * The main directional light
      */
-    public light: DirectionalLight;
+    public light: THREE.DirectionalLight;
 
     /**
      * The ambient light
      */
-    public ambientLight: AmbientLight;
+    public ambientLight: THREE.AmbientLight;
 
     /**
      * The height of the light target
@@ -378,7 +372,7 @@ export class MapViewer {
     /**
      * The loading manager
      */
-    private loadingManager: LoadingManager;
+    private loadingManager: THREE.LoadingManager;
 
     /**
      * The loaded materials
@@ -661,7 +655,7 @@ export class MapViewer {
         chunk.x = x;
         chunk.z = z;
         chunk.view = view;
-        chunk.loader = this.loadMeshFile(url, (mesh: Mesh) => {
+        chunk.loader = this.loadMeshFile(url, (mesh: THREE.Mesh) => {
 
             chunk.mesh = mesh;
 
@@ -687,7 +681,7 @@ export class MapViewer {
      * @param url The url to the mesh file
      * @param onLoad The load event
      */
-    private loadMeshFile(url: string, onLoad: (mesh: Mesh) => void): WebChunkMeshLoader {
+    private loadMeshFile(url: string, onLoad: (mesh: THREE.Mesh) => void): WebChunkMeshLoader {
         const loader = new WebChunkMeshLoader(this.loadingManager);
         loader.setPath(this.worldPath + '/');
         loader.setMaterials(this.materials);
