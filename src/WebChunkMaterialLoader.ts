@@ -1,8 +1,5 @@
 import * as pako from 'pako';
 import * as THREE from "three/src/Three";
-import {LoadingManager, MeshPhongMaterial} from "three";
-import {DefaultLoadingManager, Mapping, Material, Texture, TextureLoader} from "three/src/Three";
-import {MeshPhongMaterialParameters} from "three/src/materials/MeshPhongMaterial";
 import {UVMapping} from "three/src/constants";
 
 /**
@@ -113,7 +110,7 @@ class MaterialInfo {
     /**
      * The texture url
      */
-    public url: string;
+    public url: string | null;
 
     /**
      * The transparency of the texture
@@ -166,12 +163,12 @@ export class MaterialCreator {
     /**
      * The load manager
      */
-    private manager: LoadingManager;
+    private manager: THREE.LoadingManager;
 
     /**
      * Sets the load manager
      */
-    public setManager(value: LoadingManager): MaterialCreator {
+    public setManager(value: THREE.LoadingManager): MaterialCreator {
         this.manager = value;
         return this;
     }
@@ -193,7 +190,7 @@ export class MaterialCreator {
     /**
      * The materials
      */
-    private materials: { [name: string]: Material } = {};
+    private materials: { [name: string]: THREE.Material } = {};
 
     /**
      * The material infos
@@ -212,12 +209,12 @@ export class MaterialCreator {
     /**
      * The created material array
      */
-    private materialsArray: Material[];
+    private materialsArray: THREE.Material[];
 
     /**
      * Returns all materials as array
      */
-    public getAsArray(): Material[] {
+    public getAsArray(): THREE.Material[] {
         if (!this.materialsArray) {
             this.materialsArray = [];
             let index = 0;
@@ -238,7 +235,7 @@ export class MaterialCreator {
      * @param name The material name
      * @private The three material
      */
-    public create(name: string): Material {
+    public create(name: string): THREE.Material {
         if (!this.materials[name]) {
             this.materials[name] = this.createMaterial(name);
         }
@@ -250,17 +247,26 @@ export class MaterialCreator {
      * @param name The material name
      * @private The three material
      */
-    private createMaterial(name: string): Material {
-        const materialInfo = this.materialsInfo[name];
+    private createMaterial(name: string): THREE.Material {
+        let materialInfo = this.materialsInfo[name];
+        if (!materialInfo) {
+          console.error('Material not found: ', name);
 
-        const params: MeshPhongMaterialParameters = {};
+          // Create fallback
+          materialInfo = {
+            url: null,
+            transparent: false,
+            animation: null
+          };
+        }
+
+        const params: THREE.MeshPhysicalMaterialParameters = {};
 
         // Handle transparent pixels
         params.alphaTest = 0.5;
         params.vertexColors = true;
 
         params.reflectivity = 0;
-        params.shininess = 0;
 
         // Handle semi-transparent textures
         if (materialInfo.transparent) {
@@ -269,21 +275,24 @@ export class MaterialCreator {
             params.depthWrite = false;
         }
 
-        const map = this.loadTexture(MaterialCreator.resolveURL(this.baseUrl, materialInfo.url));
-
-        // Disable texture filtering
-        map.magFilter = THREE.NearestFilter;
-        map.minFilter = THREE.LinearMipMapLinearFilter;
-        map.wrapS = THREE.RepeatWrapping;
-        map.wrapT = THREE.RepeatWrapping;
-        map.anisotropy = 0;
-        map.generateMipmaps = false;
-
         // Create the material
-        const material = new MeshPhongMaterial(params);
+        const material = new THREE.MeshPhysicalMaterial(params);
         material.name = name;
-        material.map = map;
         material.needsUpdate = true;
+
+        if (materialInfo.url) {
+          const map = this.loadTexture(MaterialCreator.resolveURL(this.baseUrl, materialInfo.url));
+
+          // Disable texture filtering
+          map.magFilter = THREE.NearestFilter;
+          map.minFilter = THREE.LinearMipMapLinearFilter;
+          map.wrapS = THREE.RepeatWrapping;
+          map.wrapT = THREE.RepeatWrapping;
+          map.anisotropy = 0;
+          map.generateMipmaps = false;
+
+          material.map = map;
+        }
 
         // Setup animations
         if (materialInfo.animation) {
@@ -327,18 +336,18 @@ export class MaterialCreator {
      * @param onError
      * @private
      */
-    private loadTexture(url: string, mapping: Mapping = UVMapping, onLoad = undefined, onProgress = undefined, onError = undefined) {
+    private loadTexture(url: string, mapping: THREE.Mapping = UVMapping, onLoad = undefined, onProgress = undefined, onError = undefined) {
 
-        const manager = (this.manager) ? this.manager : DefaultLoadingManager;
-        let loader: TextureLoader = <TextureLoader>manager.getHandler(url);
+        const manager = (this.manager) ? this.manager : THREE.DefaultLoadingManager;
+        let loader: THREE.TextureLoader = <THREE.TextureLoader>manager.getHandler(url);
 
         if (loader === null) {
-            loader = new TextureLoader(manager);
+            loader = new THREE.TextureLoader(manager);
         }
 
         if (loader.setCrossOrigin) loader.setCrossOrigin(this.crossOrigin);
 
-        const texture: Texture = loader.load(url, onLoad, onProgress, onError);
+        const texture: THREE.Texture = loader.load(url, onLoad, onProgress, onError);
 
         if (mapping) texture.mapping = mapping;
 
@@ -350,7 +359,7 @@ export class MaterialCreator {
      * The material animation
      * @private
      */
-    private materialAnimation: { material: Material, animation: MaterialAnimation, currentFrame: number }[];
+    private materialAnimation: { material: THREE.Material, animation: MaterialAnimation, currentFrame: number }[];
 
     /**
      * A tick for the material animation
@@ -358,7 +367,7 @@ export class MaterialCreator {
     private materialAnimationTick() {
         // Tick animations
         for (const item of this.materialAnimation) {
-            if (item.material instanceof MeshPhongMaterial) {
+            if (item.material instanceof THREE.MeshPhysicalMaterial) {
                 item.currentFrame++;
                 if (item.currentFrame >= item.animation.frames.length)
                     item.currentFrame = 0;
